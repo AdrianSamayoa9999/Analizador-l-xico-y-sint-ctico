@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi primer analizador web</title>
+    <style>
+        /* Estilos generales para el cuerpo de la página */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Alinear al principio para permitir el desplazamiento */
+            min-height: 100vh; /* Altura mínima para cubrir la ventana completa */
+            margin: 0;
+            font-family: 'Comic Sans MS', Arial, verdana;
+            background-image: url('https://wallpaperaccess.com/full/6079150.jpg');
+            background-size: cover; /* La imagen de fondo cubre toda la pantalla */
+            background-position: center; /* Centrar la imagen de fondo */
+            background-repeat: no-repeat;
+            color: red; /* Color del texto en rojo */
+            overflow: auto; /* Permitir el desplazamiento en el body si es necesario */
+        }
+
+        /* Estilos para el contenedor principal */
+        .container {
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.6); /* Fondo semitransparente */
+            border: 1px solid red;  
+            padding: 20px;
+            box-shadow: 0 0 10px black;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 800px;
+            margin: 20px; /* Espacio alrededor del contenedor */
+            /* Altura mínima para que el contenedor tenga suficiente espacio, pero no más que el viewport */
+            min-height: 400px; 
+        }
+
+        /* Estilos para el título dentro del contenedor */
+        .title {
+            background-color: rgba(0, 0, 0, 0.6); /* Fondo semitransparente */
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px black;
+            margin-bottom: 20px; /* Espacio debajo del título */
+        }
+
+        /* Estilos para el área de texto */
+        textarea {
+            width: 100%; /* El área de texto ocupa el ancho completo */
+            margin-bottom: 10px;
+            text-align: left;
+            color: red;
+            background-color: black;
+            border: 1px solid red;
+            padding: 10px;
+            box-sizing: border-box;
+            resize: both; /* Permitir redimensionar */
+            border-radius: 4px;
+        }
+
+        /* Estilos para los botones de envío y borrar */
+        input[type="submit"], input[type="button"] {
+            display: inline-block;
+            margin: 0 10px;
+            padding: 10px 20px;
+            background-color: black;
+            color: red;
+            border: 1px solid red;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 0 5px black;
+        }
+
+        /* Estilos para los botones cuando el mouse está encima */
+        input[type="submit"]:hover, input[type="button"]:hover {
+            background-color: red;
+            color: black;
+        }
+
+        /* Estilos para los encabezados principales */
+        h1, h2 {
+            color: red;
+        }
+
+        /* Estilo para el encabezado secundario */
+        h2 {
+            margin-top: 20px;
+            font-family: 'Courier', verdana, sans-serif;
+            text-align: left; /* Alinear el texto a la izquierda */
+        }
+
+        /* Contenedor para las tablas */
+        .tables-container {
+            margin-top: 20px;
+        }
+
+        /* Estilo para cada tabla */
+        .table-wrapper {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        /* Estilo general para las tablas */
+        table {
+            width: 100%; /* Ocupa el 100% del contenedor */
+            border-collapse: collapse; /* Bordes colapsados */
+            margin-bottom: 20px;
+        }
+
+        /* Estilo para las celdas de las tablas */
+        th, td {
+            border: 1px solid red;
+            padding: 8px;
+            text-align: left;
+        }
+
+        /* Estilo para los encabezados de las tablas */
+        th {
+            background-color: black;
+        }
+    </style>
+
+    <script>
+        // Función para limpiar el área de texto y las tablas
+        function clearTextarea() {
+            document.querySelector('textarea[name="text"]').value = ''; // Limpia el área de texto
+            const tableBodies = document.querySelectorAll('table tbody');
+            tableBodies.forEach(tableBody => tableBody.innerHTML = ''); // Limpia las tablas
+        }
+    </script>
+</head>
+<body>
+    <!-- Contenedor principal para el contenido -->
+    <div class="container">
+        <!-- Título dentro del contenedor -->
+        <div class="title">
+            <h1>Mi primer analizador léxico y sintáctico</h1>
+        </div>
+
+        <!-- Formulario para ingresar texto -->
+        <form method="post">
+            <textarea name="text" rows="10" cols="50"></textarea>
+            <input type="submit" value="Analizar">
+            <input type="button" value="Borrar" onclick="clearTextarea()">
+        </form>
+
+        <!-- Contenedor para las tablas de análisis -->
+        <div class="tables-container">
+            <!-- Tabla para el análisis léxico -->
+            <div class="table-wrapper">
+                <h2>Análisis Léxico</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Línea</th>
+                            <th>Columna</th>
+                            <th>Valor</th>
+                            <th>Tipo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Recorre la lista de tokens léxicos y los muestra en la tabla -->
+                        {% for token in lex_tokens %}
+                        <tr>
+                            <td>{{ token.line }}</td>
+                            <td>{{ token.column }}</td>
+                            <td>{{ token.value }}</td>
+                            <td>{{ token.type }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Tabla para el análisis sintáctico -->
+            <div class="table-wrapper">
+                <h2>Análisis Sintáctico</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Línea</th>
+                            <th>Tipo de Estructura</th>
+                            <th>Estructura Correcta</th>
+                            <th>Estructura Incorrecta</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Recorre la lista de estructuras sintácticas y las muestra en la tabla -->
+                        {% for structure in syntax_structures %}
+                        <tr>
+                            <td>{{ structure.line }}</td>
+                            <td>{{ structure.type }}</td>
+                            <td>{% if structure.correct %}x{% endif %}</td>
+                            <td>{% if structure.incorrect %}x{% endif %}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
